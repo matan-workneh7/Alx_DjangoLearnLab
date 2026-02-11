@@ -3,6 +3,18 @@ Sample queries for Django relationship models
 This script demonstrates queries for Author, Book, Library, and Librarian models
 """
 
+import os
+import sys
+
+# Add the project root to Python path for direct execution
+sys.path.append('/home/matan/Documents/projects/ALX/Advanced Model Rlsp (Django)/django-models')
+
+# Only setup Django if not already configured
+if not os.environ.get('DJANGO_SETTINGS_MODULE'):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LibraryProject.settings')
+    import django
+    django.setup()
+
 from LibraryProject.relationship_app.models import Author, Book, Library, Librarian
 
 
