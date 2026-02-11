@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
 from .models import Book
-from .forms import BookForm, ExampleForm
+from .forms import ExampleForm
+from .forms import BookForm
 
 @login_required
 def book_list(request):
