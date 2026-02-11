@@ -54,9 +54,21 @@ def get_librarian_for_library(library_id):
         return None
 
 
+def get_library_by_name(library_name):
+    """
+    Get a library by its name
+    """
+    try:
+        library = Library.objects.get(name=library_name)
+        return library
+    except Library.DoesNotExist:
+        return None
+
+
 if __name__ == "__main__":
     # Example usage (for demonstration purposes)
     print("Query functions defined:")
     print("1. query_books_by_author(author_id) - Query all books by a specific author")
     print("2. list_books_in_library(library_id) - List all books in a library")
     print("3. get_librarian_for_library(library_id) - Retrieve the librarian for a library")
+    print("4. get_library_by_name(library_name) - Get a library by its name")
