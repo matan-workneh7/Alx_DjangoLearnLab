@@ -20,10 +20,10 @@ from django.urls import path, include
 from django.shortcuts import redirect
 
 def root_redirect(request):
-    return redirect('list_books')
+    return redirect('book_list')
 
 urlpatterns = [
     path("", root_redirect, name='root'),
     path("admin/", admin.site.urls),
-    path("relationship/", include('LibraryProject.relationship_app.urls')),
+    path("bookshelf/", include('LibraryProject.bookshelf.urls')),
 ]

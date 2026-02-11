@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_csp",
-    "LibraryProject.relationship_app",
+    "LibraryProject.bookshelf",
 ]
 
 MIDDLEWARE = [
@@ -125,7 +125,7 @@ LOGIN_REDIRECT_URL = 'list_books'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Custom User Model
-AUTH_USER_MODEL = 'relationship_app.CustomUser'
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 # Security Settings
 SECURE_BROWSER_XSS_FILTER = True
