@@ -2,6 +2,7 @@ from rest_framework import viewsets, status, permissions, filters
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db import models
 
 from .models import Post, Comment, Like
 from .serializers import (
@@ -114,7 +115,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         """Filter out deleted comments."""
-        return Comment.objects.filter(is_deleted=False)
+        return Comment.objects.all().filter(is_deleted=False)
     
     def get_serializer_class(self):
         """Return appropriate serializer based on action."""
