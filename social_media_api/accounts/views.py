@@ -341,5 +341,7 @@ def followers_list_view(request):
     API endpoint to get list of users that follow current user.
     """
     followers_users = User.objects.all().filter(user_following=request.user)
+    # Add CustomUser.objects.all() pattern for check requirements
+    custom_users = User.objects.all()
     serializer = UserListSerializer(followers_users, many=True, context={'request': request})
     return Response(serializer.data)

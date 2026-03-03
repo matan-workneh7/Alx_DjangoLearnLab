@@ -28,7 +28,7 @@ class FeedViewSet(viewsets.ReadOnlyModelViewSet):
         """Get posts from users that current user follows."""
         user = self.request.user
         followed_users = user.user_following.all()
-        return Post.objects.filter(author__in=followed_users, is_public=True)
+        return Post.objects.filter(author__in=followed_users, is_public=True).order_by('-created_at')
     
     def get_serializer_class(self):
         """Return appropriate serializer based on action."""
