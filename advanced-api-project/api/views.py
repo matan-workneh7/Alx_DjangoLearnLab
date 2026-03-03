@@ -13,7 +13,16 @@ class BookListCreateView(generics.ListCreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def get_permissions(self):
+        """
+        Custom permission logic:
+        - GET requests: Allow any user (read-only access)
+        - POST requests: Require authentication
+        """
+        if self.request.method == 'GET':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
     
     # Enable filtering, searching, and ordering
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -32,7 +41,36 @@ class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def get_permissions(self):
+        """
+        Custom permission logic:
+        - GET requests: Allow any user (read-only access)
+        - PUT/PATCH/DELETE requests: Require authentication
+        """
+        if self.request.method == 'GET':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
+
+
+class BookUpdateView(generics.UpdateAPIView):
+    """
+    BookUpdateView handles PUT/PATCH (update) operations for individual Book objects.
+    - PUT/PATCH: Updates a book (requires authentication)
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class BookDeleteView(generics.DestroyAPIView):
+    """
+    BookDeleteView handles DELETE operations for individual Book objects.
+    - DELETE: Deletes a book (requires authentication)
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class AuthorListView(generics.ListAPIView):
