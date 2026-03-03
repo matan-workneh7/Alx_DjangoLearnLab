@@ -11,12 +11,20 @@ A comprehensive Django REST Framework API for a social media platform with user 
 - **User Login/Logout**: Secure authentication with token management
 - **Profile Management**: Update user profile information and extended profile data
 
+### ✅ Task 1: Posts and Comments Functionality
+- **Post Model**: Complete post management with title, content, author, timestamps
+- **Comment Model**: Nested comments with parent-child relationships
+- **Like Model**: Like/unlike functionality with user tracking
+- **CRUD Operations**: Full Create, Read, Update, Delete for posts and comments
+- **ViewSets**: Django REST Framework ViewSets with proper permissions
+- **Filtering**: Search by title/content, filter by author, date, visibility
+- **Pagination**: Automatic pagination with configurable page size
+- **Permissions**: Author-only editing, soft delete for comments
+
 ### 🚀 Upcoming Features
-- **Posts and Comments**: Create, read, update, delete posts and comments
 - **User Follows**: Follow/unfollow users and view follower/following lists
 - **Feed System**: Personalized feed showing posts from followed users
 - **Notifications**: Real-time notifications for likes, comments, and follows
-- **Likes System**: Like and unlike posts with notifications
 
 ## API Endpoints
 
@@ -172,17 +180,131 @@ GET /api/auth/followers/
 Authorization: Token abc123def456ghi789
 ```
 
+### Posts Endpoints
+
+#### List Posts
+```
+GET /api/posts/
+Authorization: Token abc123def456ghi789
+Query Parameters:
+- page: Page number (default: 1)
+- search: Search in title/content
+- author: Filter by author ID
+- is_public: Filter by visibility
+- ordering: Sort order (created_at, -created_at)
+```
+
+#### Create Post
+```
+POST /api/posts/
+Authorization: Token abc123def456ghi789
+Content-Type: application/json
+
+{
+    "title": "My First Post",
+    "content": "This is the content of my first post...",
+    "is_public": true
+}
+```
+
+#### Get Post Details
+```
+GET /api/posts/{id}/
+Authorization: Token abc123def456ghi789
+```
+
+#### Update Post
+```
+PUT /api/posts/{id}/
+Authorization: Token abc123def456ghi789
+Content-Type: application/json
+
+{
+    "title": "Updated Post Title",
+    "content": "Updated content...",
+    "is_public": false
+}
+```
+
+#### Delete Post
+```
+DELETE /api/posts/{id}/
+Authorization: Token abc123def456ghi789
+```
+
+#### Like/Unlike Post
+```
+POST /api/posts/{id}/like/
+Authorization: Token abc123def456ghi789
+```
+
+#### Get Post Likes
+```
+GET /api/posts/{id}/likes/
+Authorization: Token abc123def456ghi789
+```
+
+### Comments Endpoints
+
+#### List Comments
+```
+GET /api/comments/
+Authorization: Token abc123def456ghi789
+Query Parameters:
+- page: Page number
+- post: Filter by post ID
+- author: Filter by author ID
+- ordering: Sort order
+```
+
+#### Create Comment
+```
+POST /api/comments/
+Authorization: Token abc123def456ghi789
+Content-Type: application/json
+
+{
+    "content": "Great post!",
+    "post": 1,
+    "parent": null
+}
+```
+
+#### Update Comment
+```
+PUT /api/comments/{id}/
+Authorization: Token abc123def456ghi789
+Content-Type: application/json
+
+{
+    "content": "Updated comment content..."
+}
+```
+
+#### Delete Comment
+```
+DELETE /api/comments/{id}/
+Authorization: Token abc123def456ghi789
+```
+
+#### Get Comment Replies
+```
+GET /api/comments/{id}/replies/
+Authorization: Token abc123def456ghi789
+```
+
 ## Setup Instructions
 
 ### Prerequisites
 - Python 3.8+
 - Django 6.0+
 - Django REST Framework
+- django-filter (for filtering)
 - Pillow (for image uploads)
 
 ### Installation
 
-1. **Clone the repository:**
+1. **Clone repository:**
    ```bash
    git clone <repository-url>
    cd social_media_api
@@ -191,12 +313,12 @@ Authorization: Token abc123def456ghi789
 2. **Create virtual environment:**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv/bin/activate
    ```
 
 3. **Install dependencies:**
    ```bash
-   pip install django djangorestframework django-cors-headers Pillow
+   pip install djangorestframework django-filter django-cors-headers Pillow
    ```
 
 4. **Run migrations:**
@@ -342,38 +464,41 @@ social_media_api/
 │   ├── serializers.py      # User serializers
 │   ├── views.py             # User views
 │   └── urls.py              # User URL patterns
+├── posts/                    # Posts and comments app
+│   ├── models.py            # Post, Comment, Like models
+│   ├── serializers.py      # Post and comment serializers
+│   ├── views.py             # Post and comment ViewSets
+│   └── urls.py              # Posts URL patterns
 ├── media/                    # User uploaded files
 ├── db.sqlite3               # SQLite database
 └── manage.py                # Django management script
 ```
 
 ### Customization
-- Modify `accounts/models.py` to add custom user fields
-- Update `accounts/serializers.py` for custom serialization
-- Add new views in `accounts/views.py` for additional functionality
-- Configure CORS settings in `settings.py` for frontend domains
+- Modify `posts/models.py` to add custom post fields
+- Update `posts/serializers.py` for custom serialization
+- Add new ViewSets in `posts/views.py` for additional functionality
+- Configure additional filters in ViewSets
+- Add custom permissions in `posts/views.py`
 
-## Deployment
+## Pagination and Filtering
 
-### Production Settings
-1. Set `DEBUG = False` in settings.py
-2. Configure `ALLOWED_HOSTS`
-3. Set up production database (PostgreSQL recommended)
-4. Configure static files serving
-5. Set up environment variables for sensitive data
-6. Use HTTPS in production
+### Pagination
+- **Page Size**: Configurable (default: 20)
+- **Page Numbers**: Automatic pagination
+- **Metadata**: Total count, next/previous page URLs
 
-### Environment Variables
-```bash
-export SECRET_KEY='your-secret-key'
-export DEBUG=False
-export DATABASE_URL='postgresql://user:pass@localhost/dbname'
-```
+### Filtering Options
+- **Search**: Search in title and content fields
+- **Author Filter**: Filter posts by author
+- **Date Filter**: Filter by creation date
+- **Visibility Filter**: Filter by public/private status
+- **Ordering**: Sort by date, likes, comments count
 
 ## API Documentation
 
 ### Browsable API
-Django REST Framework provides a browsable API at all endpoints. Visit `http://127.0.0.1:8000/api/auth/` in your browser to explore the API.
+Django REST Framework provides a browsable API at all endpoints. Visit `http://127.0.0.1:8000/api/` in your browser to explore the API.
 
 ### Schema Documentation
 The API follows REST conventions and uses standard HTTP methods:
@@ -404,4 +529,4 @@ For questions and support:
 
 ---
 
-**Note**: This is the first phase of the Social Media API project. Additional features like posts, comments, notifications, and feed functionality will be implemented in subsequent phases.
+**Note**: This includes the first two phases of the Social Media API project. Additional features like user follows, notifications, and feed functionality will be implemented in subsequent phases.
