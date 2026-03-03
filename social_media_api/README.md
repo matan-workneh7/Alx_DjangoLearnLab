@@ -21,16 +21,16 @@ A comprehensive Django REST Framework API for a social media platform with user 
 - **Pagination**: Automatic pagination with configurable page size
 - **Permissions**: Author-only editing, soft delete for comments
 
-### ✅ Task 2: User Follows and Feed Functionality
-- **Follow/Unfollow System**: Complete follow/unfollow functionality with proper relationships
-- **Feed Generation**: Personalized feed showing posts from followed users
-- **Custom Views**: Follow/unfollow actions with proper validation
-- **URL Patterns**: RESTful routing for follow management
-- **Database Optimization**: Efficient queries for feed generation
+### ✅ Task 3: Notifications and Likes Functionality
+- **Notifications App**: Complete notification system with GenericForeignKey
+- **Like Model**: Tracks user likes with Post and User relationships
+- **Notification Generation**: Automatic notifications for likes, comments, follows
+- **Like/Unlike Views**: Complete like/unlike functionality with notifications
+- **URL Patterns**: Explicit like/unlike endpoints
+- **Notification Preferences**: User-configurable notification settings
 
 ### 🚀 Upcoming Features
-- **Notifications**: Real-time notifications for likes, comments, and follows
-- **Likes System**: Like and unlike posts with notifications
+- **Production Deployment**: Deploy to production environment
 
 ## API Endpoints
 
@@ -342,6 +342,52 @@ Query Parameters:
 ```
 GET /api/feed/{id}/
 Authorization: Token abc123def456ghi789
+```
+
+### Notifications Endpoints
+
+#### Get Notifications
+```
+GET /api/notifications/
+Authorization: Token abc123def456ghi789
+Query Parameters:
+- page: Page number (default: 1)
+- is_read: Filter by read status (true/false)
+- ordering: Sort order (timestamp, -timestamp)
+```
+
+#### Mark Notification as Read
+```
+POST /api/notifications/{id}/mark-read/
+Authorization: Token abc123def456ghi789
+```
+
+#### Mark All Notifications as Read
+```
+POST /api/notifications/mark-all-read/
+Authorization: Token abc123def456ghi789
+```
+
+#### Get Notification Preferences
+```
+GET /api/notifications/preferences/
+Authorization: Token abc123def456ghi789
+```
+
+#### Update Notification Preferences
+```
+PUT /api/notifications/preferences/
+Authorization: Token abc123def456ghi789
+Content-Type: application/json
+
+{
+    "email_notifications": true,
+    "push_notifications": true,
+    "like_notifications": true,
+    "comment_notifications": true,
+    "follow_notifications": true,
+    "mention_notifications": true
+}
 ```
 
 ## Setup Instructions

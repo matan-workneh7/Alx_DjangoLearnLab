@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 
 from .models import Post, Comment, Like
 from .serializers import (
@@ -11,6 +12,7 @@ from .serializers import (
     CommentSerializer, CommentCreateSerializer, CommentUpdateSerializer, CommentDetailSerializer,
     LikeSerializer
 )
+from notifications.models import Notification
 
 
 class FeedViewSet(viewsets.ReadOnlyModelViewSet):
@@ -112,6 +114,16 @@ class PostViewSet(viewsets.ModelViewSet):
         if created:
             post.likes_count += 1
             post.save()
+            
+            # Create notification for post author (if not liking own post)
+            if post.author != user:
+                Notification.objects.create(
+                    recipient=post.author,
+                    actor=user,
+                    verb='liked',
+                    target=post
+                )
+            
             return Response(
                 {'message': 'Post liked successfully', 'is_liked': True},
                 status=status.HTTP_201_CREATED
@@ -120,6 +132,8 @@ class PostViewSet(viewsets.ModelViewSet):
             like.delete()
             post.likes_count -= 1
             post.save()
+            
+            # Unlike notifications are typically not sent, but we could if needed
             return Response(
                 {'message': 'Post unliked successfully', 'is_liked': False},
                 status=status.HTTP_200_OK
