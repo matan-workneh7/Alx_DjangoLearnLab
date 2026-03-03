@@ -21,10 +21,16 @@ A comprehensive Django REST Framework API for a social media platform with user 
 - **Pagination**: Automatic pagination with configurable page size
 - **Permissions**: Author-only editing, soft delete for comments
 
+### ✅ Task 2: User Follows and Feed Functionality
+- **Follow/Unfollow System**: Complete follow/unfollow functionality with proper relationships
+- **Feed Generation**: Personalized feed showing posts from followed users
+- **Custom Views**: Follow/unfollow actions with proper validation
+- **URL Patterns**: RESTful routing for follow management
+- **Database Optimization**: Efficient queries for feed generation
+
 ### 🚀 Upcoming Features
-- **User Follows**: Follow/unfollow users and view follower/following lists
-- **Feed System**: Personalized feed showing posts from followed users
 - **Notifications**: Real-time notifications for likes, comments, and follows
+- **Likes System**: Like and unlike posts with notifications
 
 ## API Endpoints
 
@@ -290,6 +296,51 @@ Authorization: Token abc123def456ghi789
 #### Get Comment Replies
 ```
 GET /api/comments/{id}/replies/
+Authorization: Token abc123def456ghi789
+```
+
+### Follow/Unfollow Endpoints
+
+#### Follow User
+```
+POST /api/auth/follow/{user_id}/
+Authorization: Token abc123def456ghi789
+```
+
+#### Unfollow User
+```
+POST /api/auth/unfollow/{user_id}/
+Authorization: Token abc123def456ghi789
+```
+
+#### Get Following List
+```
+GET /api/auth/following/
+Authorization: Token abc123def456ghi789
+```
+
+#### Get Followers List
+```
+GET /api/auth/followers/
+Authorization: Token abc123def456ghi789
+```
+
+### Feed Endpoints
+
+#### Get User Feed
+```
+GET /api/feed/
+Authorization: Token abc123def456ghi789
+Query Parameters:
+- page: Page number (default: 1)
+- search: Search in title/content
+- author: Filter by author ID
+- ordering: Sort order (created_at, -created_at)
+```
+
+#### Get Feed Post Details
+```
+GET /api/feed/{id}/
 Authorization: Token abc123def456ghi789
 ```
 

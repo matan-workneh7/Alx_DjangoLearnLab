@@ -21,8 +21,8 @@ urlpatterns = [
     path('stats/<int:user_id>/', views.user_stats_view, name='user-stats'),
     
     # Follow/Unfollow endpoints
-    path('follow/', views.FollowUserView.as_view(), name='follow-user'),
-    path('unfollow/', views.UnfollowUserView.as_view(), name='unfollow-user'),
+    path('follow/<int:user_id>/', views.follow_user_view, name='follow-user'),
+    path('unfollow/<int:user_id>/', views.unfollow_user_view, name='unfollow-user'),
     path('following/', views.UserFollowingListView.as_view(), name='user-following'),
     path('followers/', views.UserFollowersListView.as_view(), name='user-followers'),
 ]

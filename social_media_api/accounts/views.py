@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404
+from django.db import models
 
 from .models import User, UserProfile
 from .serializers import (
@@ -270,3 +271,75 @@ def user_stats_view(request, user_id=None):
         'date_joined': user.date_joined,
         'is_verified': user.profile.is_verified if hasattr(user, 'profile') else False
     })
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def follow_user_view(request):
+    """
+    API endpoint to follow a user.
+    Updates the following relationship.
+    """
+    serializer = FollowUserSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    
+    user_to_follow_id = serializer.validated_data['user_id']
+    user_to_follow = get_object_or_404(User, id=user_to_follow_id)
+    
+    if request.user.follow(user_to_follow):
+        return Response({
+            'message': f'You are now following {user_to_follow.username}',
+            'is_following': True
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({
+            'message': f'You are already following {user_to_follow.username}',
+            'is_following': True
+        }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def unfollow_user_view(request):
+    """
+    API endpoint to unfollow a user.
+    Updates the following relationship.
+    """
+    serializer = FollowUserSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    
+    user_to_unfollow_id = serializer.validated_data['user_id']
+    user_to_unfollow = get_object_or_404(User, id=user_to_unfollow_id)
+    
+    if request.user.unfollow(user_to_unfollow):
+        return Response({
+            'message': f'You have unfollowed {user_to_unfollow.username}',
+            'is_following': False
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({
+            'message': f'You are not following {user_to_unfollow.username}',
+            'is_following': False
+        }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def following_list_view(request):
+    """
+    API endpoint to get list of users that current user follows.
+    """
+    following_users = request.user.user_following.all()
+    serializer = UserListSerializer(following_users, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def followers_list_view(request):
+    """
+    API endpoint to get list of users that follow current user.
+    """
+    followers_users = User.objects.all().filter(user_following=request.user)
+    serializer = UserListSerializer(followers_users, many=True, context={'request': request})
+    return Response(serializer.data)

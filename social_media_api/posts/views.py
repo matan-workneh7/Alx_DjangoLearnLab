@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import models
+from django.contrib.auth import get_user_model
 
 from .models import Post, Comment, Like
 from .serializers import (
@@ -10,6 +11,30 @@ from .serializers import (
     CommentSerializer, CommentCreateSerializer, CommentUpdateSerializer, CommentDetailSerializer,
     LikeSerializer
 )
+
+
+class FeedViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for generating user feed.
+    Shows posts from users that current user follows.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Post.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['title', 'content']
+    filterset_fields = ['author', 'created_at']
+    
+    def get_queryset(self):
+        """Get posts from users that current user follows."""
+        user = self.request.user
+        followed_users = user.user_following.all()
+        return Post.objects.filter(author__in=followed_users, is_public=True)
+    
+    def get_serializer_class(self):
+        """Return appropriate serializer based on action."""
+        if self.action == 'list':
+            return PostDetailSerializer
+        return PostSerializer
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
