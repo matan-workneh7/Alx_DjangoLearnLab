@@ -10,7 +10,8 @@ from django.urls import reverse_lazy
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 
-from .models import Post, Comment, Tag
+from taggit.models import Tag
+from .models import Post, Comment
 from .forms import (
     CustomUserCreationForm, UserUpdateForm, PostForm, 
     CommentForm, TagForm, SearchForm
@@ -236,12 +237,12 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # Tag Views
-def posts_by_tag_view(request, slug):
+def posts_by_tag_view(request, tag_slug):
     """
     Show all posts with a specific tag
     """
-    tag = get_object_or_404(Tag, slug=slug)
-    posts = Post.objects.filter(tags=tag).order_by('-published_date')
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    posts = Post.objects.filter(tags__in=[tag]).order_by('-published_date')
     
     paginator = Paginator(posts, 5)
     page_number = request.GET.get('page')

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from taggit.forms import TagWidget
 from .models import Post, Comment, Tag
 
 
@@ -45,15 +46,9 @@ class UserUpdateForm(forms.ModelForm):
 
 class PostForm(forms.ModelForm):
     """
-    Form for creating and editing blog posts
+    Form for creating and editing blog posts.
+    Uses django-taggit TagWidget for tag management.
     """
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False,
-        help_text='Select tags for your post (optional)'
-    )
-    
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']
@@ -66,12 +61,12 @@ class PostForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 15,
                 'placeholder': 'Write your post content here...'
+            }),
+            'tags': TagWidget(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter tags separated by commas'
             })
         }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['tags'].queryset = Tag.objects.all().order_by('name')
 
 
 class CommentForm(forms.ModelForm):

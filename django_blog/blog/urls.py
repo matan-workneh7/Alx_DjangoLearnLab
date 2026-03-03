@@ -11,7 +11,7 @@ urlpatterns = [
     # Home and Blog URLs
     path('', views.home_view, name='home'),
     path('search/', views.search_view, name='search'),
-    path('tags/<slug:slug>/', views.posts_by_tag_view, name='posts_by_tag'),
+    path('tags/<slug:tag_slug>/', views.posts_by_tag_view, name='posts_by_tag'),
     
     # Post URLs
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
