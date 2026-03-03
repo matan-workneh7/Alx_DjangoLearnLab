@@ -178,91 +178,61 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # Comment Views
-@login_required
-def comment_create_view(request, post_id):
+class CommentCreateView(LoginRequiredMixin, CreateView):
     """
     Create a new comment on a post
     """
-    post = get_object_or_404(Post, id=post_id)
-    
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success': True,
-                    'comment': {
-                        'id': comment.id,
-                        'author': comment.author.username,
-                        'content': comment.content,
-                        'created_at': comment.created_at.strftime('%B %d, %Y, %H:%M')
-                    }
-                })
-            
-            messages.success(request, 'Comment posted successfully!')
-            return redirect('post_detail', pk=post_id)
-        else:
-            messages.error(request, 'Comment posting failed. Please correct the errors below.')
-    
-    return redirect('post_detail', pk=post_id)
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        messages.success(self.request, 'Comment posted successfully!')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['pk']})
 
 
-@login_required
-def comment_edit_view(request, comment_id):
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     Edit an existing comment
     """
-    comment = get_object_or_404(Comment, id=comment_id)
-    
-    if request.user != comment.author:
-        messages.error(request, 'You can only edit your own comments.')
-        return redirect('post_detail', pk=comment.post.id)
-    
-    if request.method == 'POST':
-        form = CommentForm(request.POST, instance=comment)
-        if form.is_valid():
-            form.save()
-            
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success': True,
-                    'content': comment.content
-                })
-            
-            messages.success(request, 'Comment updated successfully!')
-            return redirect('post_detail', pk=comment.post.id)
-        else:
-            messages.error(request, 'Comment update failed. Please correct the errors below.')
-    
-    return redirect('post_detail', pk=comment.post.id)
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Comment updated successfully!')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
 
 
-@login_required
-def comment_delete_view(request, comment_id):
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     Delete a comment
     """
-    comment = get_object_or_404(Comment, id=comment_id)
-    post_id = comment.post.id
-    
-    if request.user != comment.author:
-        messages.error(request, 'You can only delete your own comments.')
-        return redirect('post_detail', pk=post_id)
-    
-    if request.method == 'POST':
-        comment.delete()
-        
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'success': True})
-        
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+
+    def delete(self, request, *args, **kwargs):
         messages.success(request, 'Comment deleted successfully!')
-    
-    return redirect('post_detail', pk=post_id)
+        return super().delete(request, *args, **kwargs)
 
 
 # Tag Views
