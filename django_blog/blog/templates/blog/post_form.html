@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Post{% else %}Create Post{% endif %} - Django Blog
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="form-title">
+        {% if form.instance.pk %}Edit Post{% else %}Create New Post{% endif %}
+    </h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_title">Title</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <small class="text-danger">{{ form.title.errors }}</small>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_content">Content</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <small class="text-danger">{{ form.content.errors }}</small>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label>Tags</label>
+            <div class="tags-container">
+                {{ form.tags }}
+            </div>
+            {% if form.tags.errors %}
+                <small class="text-danger">{{ form.tags.errors }}</small>
+            {% endif %}
+            <small class="form-text text-muted">Select tags to categorize your post (optional)</small>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                {% if form.instance.pk %}Update Post{% else %}Create Post{% endif %}
+            </button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
