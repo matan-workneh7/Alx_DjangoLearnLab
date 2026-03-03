@@ -9,4 +9,5 @@ router.register(r'feed', views.FeedViewSet, basename='feed')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('feed/', views.FeedViewSet.as_view({'basename': 'feed'}), name='feed-list'),
 ]
