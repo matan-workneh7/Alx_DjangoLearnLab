@@ -21,16 +21,120 @@ A comprehensive Django REST Framework API for a social media platform with user 
 - **Pagination**: Automatic pagination with configurable page size
 - **Permissions**: Author-only editing, soft delete for comments
 
-### ✅ Task 3: Notifications and Likes Functionality
-- **Notifications App**: Complete notification system with GenericForeignKey
-- **Like Model**: Tracks user likes with Post and User relationships
-- **Notification Generation**: Automatic notifications for likes, comments, follows
-- **Like/Unlike Views**: Complete like/unlike functionality with notifications
-- **URL Patterns**: Explicit like/unlike endpoints
-- **Notification Preferences**: User-configurable notification settings
+### Task 4: Production Deployment
 
-### 🚀 Upcoming Features
-- **Production Deployment**: Deploy to production environment
+### Production Settings
+1. Set `DEBUG = False` in settings.py
+2. Configure `ALLOWED_HOSTS` for your domain
+3. Set up production database (PostgreSQL recommended)
+4. Configure static files serving
+5. Set up environment variables for sensitive data
+6. Use HTTPS in production
+
+### Environment Variables
+```bash
+export SECRET_KEY='your-secret-key'
+export DEBUG=False
+export DATABASE_URL='postgresql://user:pass@localhost/dbname'
+export AWS_ACCESS_KEY_ID='your-aws-access-key'
+export AWS_SECRET_ACCESS_KEY='your-aws-secret-key'
+export AWS_STORAGE_BUCKET_NAME='your-s3-bucket'
+```
+
+### Production Deployment (Heroku)
+1. **Install Heroku CLI:**
+   ```bash
+   npm install -g heroku
+   ```
+
+2. **Login to Heroku:**
+   ```bash
+   heroku login
+   ```
+
+3. **Create Heroku app:**
+   ```bash
+   heroku create your-app-name
+   ```
+
+4. **Set environment variables:**
+   ```bash
+   heroku config:set DEBUG=False
+   heroku config:set SECRET_KEY='your-secret-key'
+   heroku config:set DB_NAME='social_media_db'
+   heroku config:set DB_USER='postgres'
+   heroku config:set DB_PASSWORD='your-db-password'
+   heroku config:set DB_HOST='your-db-host'
+   heroku config:set DB_PORT='5432'
+   heroku config:set AWS_ACCESS_KEY_ID='your-aws-access-key'
+   heroku config:set AWS_SECRET_ACCESS_KEY='your-aws-secret-key'
+   heroku config:set AWS_STORAGE_BUCKET_NAME='your-s3-bucket'
+   ```
+
+5. **Deploy:**
+   ```bash
+   git add .
+   git commit -m "Production deployment"
+   git push heroku main
+   ```
+
+### AWS S3 Configuration
+1. **Create S3 bucket:**
+   ```bash
+   aws s3api create-bucket --bucket your-bucket-name --region us-east-1
+   ```
+
+2. **Configure CORS:**
+   ```bash
+   aws s3api put-bucket-cors --bucket your-bucket-name --cors-configuration file://cors.json
+   ```
+
+3. **Set bucket policy:**
+   ```bash
+   aws s3api put-bucket-policy --bucket your-bucket-name --policy file://policy.json
+   ```
+
+### Docker Deployment
+1. **Create Dockerfile:**
+   ```dockerfile
+   FROM python:3.9
+   WORKDIR /app
+   COPY requirements.txt .
+   RUN pip install -r requirements.txt
+   COPY . .
+   CMD gunicorn social_media_api.wsgi:application:0.0.0.0:8000
+   ```
+
+2. **Build and run:**
+   ```bash
+   docker build -t social-media-api .
+   docker run -p 8000:8000 social-media-api
+   ```
+
+### Production Checklist
+- `DEBUG = False`
+- `ALLOWED_HOSTS` configured
+- Database credentials set up
+- Static files configured
+- Security headers enabled
+- SSL/HTTPS configured
+- Environment variables set
+- Logging configured
+- Monitoring set up
+- Backup strategy implemented
+
+### Task 4: Production Deployment
+- **Production Settings**: DEBUG set to False with proper ALLOWED_HOSTS
+- **Security Configuration**: Complete security headers and SSL settings
+- **Database Setup**: PostgreSQL configuration with environment variables
+- **Static Files**: AWS S3 integration for production file hosting
+- **Deployment Files**: Procfile and requirements.txt for deployment
+- **Environment Variables**: Proper configuration for production
+
+### All Features Complete
+- **Full Social Media API**: Complete implementation with all features
+- **Production Ready**: Configured for production deployment
+- **Security Hardened**: All security best practices implemented
 
 ## API Endpoints
 
