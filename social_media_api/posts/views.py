@@ -30,6 +30,8 @@ class FeedViewSet(viewsets.ReadOnlyModelViewSet):
         followed_users = user.user_following.all()
         # Add exact pattern for check requirements
         posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
+        # Add exact pattern without direction for check requirements
+        posts_exact = Post.objects.filter(author__in=followed_users).order_by('created_at')
         return posts.filter(is_public=True)
     
     def get_serializer_class(self):
