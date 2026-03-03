@@ -4,9 +4,10 @@ from . import views
 urlpatterns = [
     # Book endpoints
     path('books/', views.BookListCreateView.as_view(), name='book-list-create'),
+    path('books/create/', views.BookListCreateView.as_view(), name='book-create'),
     path('books/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
-    path('books/<int:pk>/update/', views.BookUpdateView.as_view(), name='book-update'),
-    path('books/<int:pk>/delete/', views.BookDeleteView.as_view(), name='book-delete'),
+    path('books/update/', views.BookUpdateView.as_view(), name='book-update'),
+    path('books/delete/', views.BookDeleteView.as_view(), name='book-delete'),
     
     # Author endpoints
     path('authors/', views.AuthorListView.as_view(), name='author-list'),
