@@ -112,7 +112,7 @@ class BookAPITest(APITestCase):
     
     def test_create_book_authenticated(self):
         """Test creating a book with authentication"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         url = reverse('book-list-create')
         data = {
             'title': 'New Book',
@@ -125,7 +125,7 @@ class BookAPITest(APITestCase):
     
     def test_create_book_future_year(self):
         """Test creating a book with future publication year (should fail)"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         url = reverse('book-list-create')
         future_year = datetime.now().year + 1
         data = {
@@ -138,7 +138,7 @@ class BookAPITest(APITestCase):
     
     def test_update_book(self):
         """Test updating a book"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         url = reverse('book-detail', kwargs={'pk': self.book.pk})
         data = {
             'title': 'Updated Book',
@@ -152,7 +152,7 @@ class BookAPITest(APITestCase):
     
     def test_delete_book(self):
         """Test deleting a book"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         url = reverse('book-detail', kwargs={'pk': self.book.pk})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
