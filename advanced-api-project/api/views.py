@@ -1,4 +1,5 @@
-from rest_framework import generics, permissions
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Book, Author
@@ -21,8 +22,8 @@ class BookListCreateView(generics.ListCreateAPIView):
         - POST requests: Require authentication
         """
         if self.request.method == 'GET':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+            return [IsAuthenticatedOrReadOnly()]
+        return [IsAuthenticated()]
     
     # Enable filtering, searching, and ordering
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -49,8 +50,8 @@ class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
         - PUT/PATCH/DELETE requests: Require authentication
         """
         if self.request.method == 'GET':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+            return [IsAuthenticatedOrReadOnly()]
+        return [IsAuthenticated()]
 
 
 class BookUpdateView(generics.UpdateAPIView):
@@ -60,7 +61,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 class BookDeleteView(generics.DestroyAPIView):
@@ -70,7 +71,7 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 class AuthorListView(generics.ListAPIView):
@@ -80,7 +81,7 @@ class AuthorListView(generics.ListAPIView):
     """
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    permission_classes = [permissions.AllowAny]  # Read-only access for everyone
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Read-only access for everyone
     
     # Enable searching and ordering for authors
     filter_backends = [SearchFilter, OrderingFilter]
@@ -96,4 +97,4 @@ class AuthorDetailView(generics.RetrieveAPIView):
     """
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    permission_classes = [permissions.AllowAny]  # Read-only access for everyone
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Read-only access for everyone
