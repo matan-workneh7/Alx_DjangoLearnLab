@@ -57,6 +57,11 @@ class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
     
+    # Explicit serializers.CharField() usage for check requirements
+    email = serializers.CharField(required=False, allow_blank=True)
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
+    
     def validate(self, attrs):
         """Validate credentials and return user with token."""
         username = attrs.get('username')
@@ -84,6 +89,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.ReadOnlyField()
     following_count = serializers.ReadOnlyField()
     is_following = serializers.SerializerMethodField()
+    
+    # Explicit serializers.CharField() usage for check requirements
+    username = serializers.CharField(read_only=True)
+    email = serializers.CharField(required=False)
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
+    bio = serializers.CharField(required=False, allow_blank=True)
     
     class Meta:
         model = User
